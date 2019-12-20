@@ -1,26 +1,25 @@
 #include <GL/glut.h>
 #include <stdlib.h>
 #include <math.h>
-#include <vector>
-#include <iostream>
+#include<vector>
+#include<iostream>
 using namespace std;
-/* Establece el tamaño inicial de la ventana de visualizacion.
-*/
-GLsizei winWidth=400;
-GLsizei winHeight=300;
-/* Establece el tamaño de la ventana de recorte en coordenadas universales.*/
-GLfloat xwcMin= 0.0, xwcMax=100.0;
-GLfloat ywcMin= 0.0, ywcMax=100.0;
 
 vector<int>x;
 vector<int>y;
+/* Establece el tamaño inicial de la ventana de visualizacion.
+*/
+GLsizei winWidth=600;
+GLsizei winHeight=600;
+/* Establece el tamaño de la ventana de recorte en coordenadas universales.*/
+GLfloat xwcMin= -50.0, xwcMax=50.0;
+GLfloat ywcMin= -50.0, ywcMax=50.0;
 
 class wcPt3D {
 public:
 GLfloat x, y, z;
 };
 
-void bezier (GLint nCtrlPts, GLint nBezCurvePts); 
 void init (void)
 {
 /* Establece el color de la ventana de visualizacion en blanco.*/
@@ -36,11 +35,11 @@ glEnd ( );
 
 void plotPoint (int x, int y)
 {
-	//glColor3f (0.0,0.0, 1.0);
 glBegin (GL_POINTS);
 glVertex2i (x, y);
 glEnd ( );
 }
+
 /* Calcula los coeficientes binomiales C para un valor dado de n.*/
 void binomialCoeffs (GLint n, GLint * C)
 {
@@ -55,38 +54,8 @@ void binomialCoeffs (GLint n, GLint * C)
 	}
 }
 
-void mouse(int button, int state,int mousex, int mousey){
-	if(state==GLUT_DOWN and button==GLUT_LEFT_BUTTON){
-		//glClearColor (1.0, 1.0, 1.0, 1.0);
-		glColor3f (0.0,0.0, 1.0);
-		glPointSize (4);
-		plotPoint(40,40);
-		mousex=500-mousex;
-        mousey = mousey;
-		plotPoint(mousex,mousey);
-		/*x.push_back(mousex);
-		y.push_back(mousey);
-		glPointSize (4);*/
-		cout<<"Entra por aca deberas"<<500-mousex<<"sdsd"<<mousey<<endl;
-	}
-	if(state==GLUT_DOWN and button==GLUT_RIGHT_BUTTON){
-
-		GLint nCtrlPts=4;
-		GLint nBezCurvePts=10000;
-		//glClear (GL_COLOR_BUFFER_BIT);
-		glPointSize (4);
-		glColor3f (1.0, 0.0, 0.0);
-		//
-		//Borra la ventana de visualización.
-		//Establece el color de los puntos en rojo.
-		bezier (nCtrlPts, nBezCurvePts);
-		
-	}
-	glutPostRedisplay();
-	glFlush();
-}
-
-void computeBezPt (GLfloat u, wcPt3D * bezPt, GLint nCtrlPts, GLint * C)
+void computeBezPt (GLfloat u, wcPt3D * bezPt, GLint nCtrlPts,
+wcPt3D * ctrlPts, GLint * C)
 {
 GLint k, n=nCtrlPts - 1;
 GLfloat bezBlendFcn;
@@ -96,13 +65,13 @@ Calcula las funciones de combinación y los puntos de control de
 combinación. */
 	for (k = 0; k < nCtrlPts; k++) {
 	bezBlendFcn = C[k] * pow (u, k) * pow (1 - u, n - k);
-	bezPt->x += x[k]* bezBlendFcn;
-	bezPt->y += y[k] * bezBlendFcn;
-	//bezPt->z += ctrlPts [k].z * bezBlendFcn;
+	bezPt->x += ctrlPts [k].x * bezBlendFcn;
+	bezPt->y += ctrlPts [k].y * bezBlendFcn;
+	bezPt->z += ctrlPts [k].z * bezBlendFcn;
 	}
 }
 
-void bezier (GLint nCtrlPts, GLint nBezCurvePts)
+void bezier (wcPt3D * ctrlPts, GLint nCtrlPts, GLint nBezCurvePts)
 {
 	wcPt3D bezCurvePt;
 	GLfloat u;
@@ -113,67 +82,119 @@ void bezier (GLint nCtrlPts, GLint nBezCurvePts)
 	binomialCoeffs (nCtrlPts - 1, C);
 	for (k=0; k <= nBezCurvePts; k++) {
 	u = GLfloat (k) / GLfloat (nBezCurvePts);
-	computeBezPt (u, &bezCurvePt, nCtrlPts, C);
+	computeBezPt (u, &bezCurvePt, nCtrlPts, ctrlPts, C);
 	plotPoint_b (bezCurvePt);
 	}
 	delete [ ] C;
 }
 
-void displey (void)
+void displayFcn (void)
 {
-	//glClearColor (1.0, 1.0, 1.0, 0.0);
+
+	plotPoint(40,40);
 /* Establece un número de puntos de control de ejemplo y un número de
 * puntos de curva que se deben dibujar a lo largo de la curva de Bezier.
 */
-//wcPt3D ctrlPts [4] { {-40.0, -40.0, 0.0}, {-10.0, 200.0, 0.0},{10.0, -200.0, 0.0}, {40.0, 40.0, 0.0} };
-	/*
-x.push_back(-40.0);
-y.push_back(-40.0);
+GLint nCtrlPts=4;
+GLint nBezCurvePts=1000;
 
-x.push_back(-10.0);
-y.push_back(200.0);
-
-x.push_back(-10.0);
-y.push_back(-200.0);
-
-
-x.push_back(40.0);
-y.push_back(40.0);
-
-x.push_back(70.0);
-y.push_back(70.0);
-GLint nCtrlPts=5;
-GLint nBezCurvePts=10000;
-glClear (GL_COLOR_BUFFER_BIT);
+glColor3f (0.0,0.0, 1.0);
 glPointSize (4);
+glBegin (GL_POINTS);
+glVertex2f (-40.0, -40.0);
+glEnd ( );
+
+glBegin (GL_POINTS);
+glVertex2f (-10.0, 200.0);
+glEnd ( );
+
+glBegin (GL_POINTS);
+glVertex2f (10.0, -200.0);
+glEnd ( );
+
+glBegin (GL_POINTS);
+glVertex2f (40.0, 40.0);
+glEnd ( );
+
+glBegin (GL_POINTS);
+glVertex2f (50.0, -40.0);
+glEnd ( );
+
+wcPt3D ctrlPts [5] { {-40.0, -10.0, 0.0}, {-10.0, 200.0, 0.0},{10.0, -200.0, 0.0}, {40.0, 40.0, 0.0} ,{50.0, 10.0} };
+glClear (GL_COLOR_BUFFER_BIT);
+glPointSize (5);
 glColor3f (1.0, 0.0, 0.0);
+//
+//
 //Borra la ventana de visualización.
 //Establece el color de los puntos en rojo.
-bezier (nCtrlPts, nBezCurvePts); */
+bezier (ctrlPts, nCtrlPts, nBezCurvePts);
 glFlush ( );
 }
 
 void winReshapeFcn (GLint newWidth, GLint newHeight)
 {
 /* Mantiene una relación de aspeto de valor 1.0.*/
-glViewport (0, 0, newWidth, newHeight);
+glViewport (0, 0, newHeight, newHeight);
 glMatrixMode (GL_PROJECTION);
 glLoadIdentity ( );
 gluOrtho2D (xwcMin, xwcMax, ywcMin, ywcMax);
 glClear (GL_COLOR_BUFFER_BIT);
 }
 
+
+void mouse(int button, int state,int mousex, int mousey){
+	if(state==GLUT_DOWN and button==GLUT_LEFT_BUTTON){
+		//glClearColor (1.0, 1.0, 1.0, 1.0);
+		
+		glPointSize (4);
+		glColor3f (0.0, 0.0, 1.0);
+		plotPoint(40,40);
+		glBegin (GL_POINTS);
+		glVertex2i (10, 10);
+		glEnd ();
+		mousex=600-mousex;
+        mousey = mousey;
+		plotPoint(mousex,mousey);
+
+		glBegin (GL_POINTS);
+		glVertex2i (mousex, mousey);
+		glEnd ();
+
+		/*x.push_back(mousex);
+		y.push_back(mousey);
+		glPointSize (4);*/
+		cout<<"Entra por aca deberas"<<mousex<<"sdsd"<<mousey<<endl;
+	}
+	if(state==GLUT_DOWN and button==GLUT_RIGHT_BUTTON){
+
+		GLint nCtrlPts=4;
+		GLint nBezCurvePts=10000;
+		//glClear (GL_COLOR_BUFFER_BIT);
+		glPointSize (4);
+		glColor3f (1.0, 0.0, 0.0);
+		wcPt3D ctrlPts [4] { {-40.0, -40.0, 0.0}, {-10.0, 200.0, 0.0},{10.0, -200.0, 0.0}, {40.0, 40.0, 0.0} };
+		//
+		//Borra la ventana de visualización.
+		//Establece el color de los puntos en rojo.
+		bezier (ctrlPts,nCtrlPts, nBezCurvePts);
+		
+	}
+	//glutPostRedisplay();
+	glFlush();
+}
+
 int main (int argc, char** argv)
 {
 	glutInit (&argc, argv);
 	glutInitDisplayMode (GLUT_SINGLE | GLUT_RGB);
-	glutInitWindowPosition (200, 200);
-	glutInitWindowSize (400, 300);
+	glutInitWindowPosition (50, 50);
+	glutInitWindowSize (winWidth, winHeight);
 	glutCreateWindow ("Curva de Bezier");
-	glutDisplayFunc (displey);
+	init ( );
+	glutDisplayFunc (displayFcn);
 	glutMouseFunc(mouse);
 	glutReshapeFunc (winReshapeFcn);
-	init();
 	glutMainLoop ( );
 	return 0;
 }
