@@ -6,11 +6,11 @@
 using namespace std;
 /* Establece el tamaño inicial de la ventana de visualizacion.
 */
-GLsizei winWidth=700;
-GLsizei winHeight=700;
+GLsizei winWidth=400;
+GLsizei winHeight=300;
 /* Establece el tamaño de la ventana de recorte en coordenadas universales.*/
-GLfloat xwcMin= -50.0, xwcMax=50.0;
-GLfloat ywcMin= -50.0, ywcMax=50.0;
+GLfloat xwcMin= 0.0, xwcMax=100.0;
+GLfloat ywcMin= 0.0, ywcMax=100.0;
 
 vector<int>x;
 vector<int>y;
@@ -36,6 +36,7 @@ glEnd ( );
 
 void plotPoint (int x, int y)
 {
+	//glColor3f (0.0,0.0, 1.0);
 glBegin (GL_POINTS);
 glVertex2i (x, y);
 glEnd ( );
@@ -57,12 +58,16 @@ void binomialCoeffs (GLint n, GLint * C)
 void mouse(int button, int state,int mousex, int mousey){
 	if(state==GLUT_DOWN and button==GLUT_LEFT_BUTTON){
 		//glClearColor (1.0, 1.0, 1.0, 1.0);
-		plotPoint(mousex,mousey);
-		x.push_back(mousex);
-		y.push_back(mousey);
-		glPointSize (4);
 		glColor3f (0.0,0.0, 1.0);
-		cout<<"Entra por aca deberas"<<mousex<<"sdsd"<<mousey<<endl;
+		glPointSize (4);
+		plotPoint(40,40);
+		mousex=500-mousex;
+        mousey = mousey;
+		plotPoint(mousex,mousey);
+		/*x.push_back(mousex);
+		y.push_back(mousey);
+		glPointSize (4);*/
+		cout<<"Entra por aca deberas"<<500-mousex<<"sdsd"<<mousey<<endl;
 	}
 	if(state==GLUT_DOWN and button==GLUT_RIGHT_BUTTON){
 
@@ -121,6 +126,7 @@ void displey (void)
 * puntos de curva que se deben dibujar a lo largo de la curva de Bezier.
 */
 //wcPt3D ctrlPts [4] { {-40.0, -40.0, 0.0}, {-10.0, 200.0, 0.0},{10.0, -200.0, 0.0}, {40.0, 40.0, 0.0} };
+	/*
 x.push_back(-40.0);
 y.push_back(-40.0);
 
@@ -143,14 +149,14 @@ glPointSize (4);
 glColor3f (1.0, 0.0, 0.0);
 //Borra la ventana de visualización.
 //Establece el color de los puntos en rojo.
-bezier (nCtrlPts, nBezCurvePts); 
+bezier (nCtrlPts, nBezCurvePts); */
 glFlush ( );
 }
 
 void winReshapeFcn (GLint newWidth, GLint newHeight)
 {
 /* Mantiene una relación de aspeto de valor 1.0.*/
-glViewport (0, 0, newHeight, newHeight);
+glViewport (0, 0, newWidth, newHeight);
 glMatrixMode (GL_PROJECTION);
 glLoadIdentity ( );
 gluOrtho2D (xwcMin, xwcMax, ywcMin, ywcMax);
@@ -161,13 +167,13 @@ int main (int argc, char** argv)
 {
 	glutInit (&argc, argv);
 	glutInitDisplayMode (GLUT_SINGLE | GLUT_RGB);
-	glutInitWindowPosition (50, 50);
-	glutInitWindowSize (winWidth, winHeight);
+	glutInitWindowPosition (200, 200);
+	glutInitWindowSize (400, 300);
 	glutCreateWindow ("Curva de Bezier");
-	init ( );
 	glutDisplayFunc (displey);
 	glutMouseFunc(mouse);
 	glutReshapeFunc (winReshapeFcn);
+	init();
 	glutMainLoop ( );
 	return 0;
 }

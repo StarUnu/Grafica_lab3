@@ -8,11 +8,11 @@ MODE_ELLIPSE = 2
 MODE_ROUNDED_RECTANGLE = 3
 
 MODE = MODE_RECTANGLE
-ITERATIONS = 128
+ITERATIONS = 32
 LEAF_SIZE = 4
 PADDING = 1
 FILL_COLOR = (0, 0, 0)
-SAVE_FRAMES = False
+SAVE_FRAMES = True
 ERROR_RATE = 0.5
 AREA_POWER = 0.25
 OUTPUT_SCALE = 1
@@ -125,14 +125,14 @@ class Model(object):
         im.save(path, 'PNG')
 
 def main():
-    model = Model('soni.jpeg')
+    model = Model('paisaje.jpg')
     previous = None
     for i in range(ITERATIONS):
         error = model.average_error()
         if previous is None or previous - error > ERROR_RATE:
             print (i, error)
             if SAVE_FRAMES:
-                model.render('frames/%06d.png' % i)
+                model.render('/home/erika/Documentos/grafica2/tareacontinua/Quatree/frames/%06d.png' % i)
             previous = error
         model.split()
     model.render('output.png')
