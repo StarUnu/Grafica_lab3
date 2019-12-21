@@ -20,10 +20,33 @@
 ```
 ![](Curvas/ejecucion.jpeg)
 
-**Cuatree**: Se realiza se divide la imagen en bloque de cuatro, sucesivamente. Obteniendo una imagen simplificada. Realiza los siguientes pasos:
+**Cuatree**: Realiza subdivición de la imagen en bloques de cuatro, sucesivamente hasta, llegar la profundidad indicada. Obteniendo una imagen simplificada. 
+Los resultados de una imagen de caricatura son:
+
+Entrada
+
+![](Quatree/soni.jpeg)
+
+Realiza los siguientes pasos para la imagen de una caricatura con una profundidad de 128(solo se muestra algunos, todas las imágenes creados son descritas en la carpeta framessonic):
 
 ![](Quatree/framessonic/000000.png)
 ![](Quatree/framessonic/000025.png)
 ![](Quatree/framessonic/000040.png)
 ![](Quatree/framessonic/000110.png)
-![](Quatree/salidasoni.png)
+
+Salida
+
+![](Quatree/framessonic/000127.png)
+
+Asimismo se realiza con la imagen de un paisaje:
+
+Entrada
+
+![](Quatree/paisaje.jpg)
+Se subdivide con una profundidad de 32 y son descritos en carpeta frames
+
+Salida
+
+![](Quatree/frames/000115.png)
+
+En conclusion, observamos que la caricatura, puede reflejar con mayor visibilidad los colores, mientras que en el paisaje, al tener varios objetos en la imagen, lo vuelve no comprensible. Tambien implica la cantidad de profundidad que le damos al quatree a mayor cantidad mayor visibilidad de la imagen.
